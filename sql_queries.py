@@ -12,7 +12,7 @@ time_table_drop = "DROP TABLE IF EXISTS time"
 
 # Here a type SERIAL is used for songplay_id so that postgresql auto increments this id
 songplay_table_create = ("""CREATE TABLE IF NOT EXISTS songplays \
-                            (songplay_id SERIAL PRIMARY KEY, start_time bigint, user_id int, level varchar, \
+                            (songplay_id SERIAL PRIMARY KEY, start_time bigint NOT NULL, user_id int, level varchar, \
                              song_id varchar, artist_id varchar, session_id int, location varchar, \
                              user_agent varchar); 
 """)
@@ -24,7 +24,7 @@ user_table_create = ("""CREATE TABLE IF NOT EXISTS users \
 
 # Since we will use the title and duration to uniquely identify songs, they'll be added to a composite key
 song_table_create = ("""CREATE TABLE IF NOT EXISTS songs \
-                        (song_id varchar, title varchar , artist_id varchar, \
+                        (song_id varchar, title varchar , artist_id varchar NOT NULL, \
                         year int, duration decimal, 
                         PRIMARY KEY (song_id, title, duration));
 """)
