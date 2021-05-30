@@ -4,6 +4,7 @@ import psycopg2
 import pandas as pd
 from sql_queries import *
 
+import credentials
 
 def process_song_file(cur, filepath):
     """This function takes in a file path for a JSON file containing song and artist metadata.
@@ -113,7 +114,9 @@ def main():
     """The main function, which is carried out if this file is executed.
     A database connection is created, and then the song data files and log data files are processed.
     """
-    conn = psycopg2.connect("host=127.0.0.1 dbname=sparkifydb user=student password=student")
+    # conn = psycopg2.connect("host=127.0.0.1 dbname=sparkifydb user=student password=student")
+    conn = psycopg2.connect("host=127.0.0.1 dbname=sparkifydb user=%s password=%s" \
+                            % (credentials.USER, credentials.PASSWORD))
     cur = conn.cursor()
 
     process_data(cur, conn, filepath='data/song_data', func=process_song_file)

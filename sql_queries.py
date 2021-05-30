@@ -10,13 +10,6 @@ time_table_drop = "DROP TABLE IF EXISTS time"
 
 # CREATE TABLES
 
-# Here a type SERIAL is used for songplay_id so that postgresql auto increments this id
-songplay_table_create = ("""CREATE TABLE IF NOT EXISTS songplays \
-                            (songplay_id SERIAL PRIMARY KEY, start_time bigint NOT NULL, user_id int NOT NULL, \
-                             level varchar, song_id varchar, artist_id varchar, session_id int, \
-                             location varchar, user_agent varchar); 
-""")
-
 user_table_create = ("""CREATE TABLE IF NOT EXISTS users \
                         (user_id int PRIMARY KEY, first_name varchar, last_name varchar, \
                          gender char, level varchar);
@@ -24,7 +17,7 @@ user_table_create = ("""CREATE TABLE IF NOT EXISTS users \
 
 # Since we will use the title and duration to uniquely identify songs, they'll be added to a composite key
 song_table_create = ("""CREATE TABLE IF NOT EXISTS songs \
-                        (song_id varchar, title varchar , artist_id varchar NOT NULL, \
+                        (song_id varchar UNIQUE, title varchar , artist_id varchar NOT NULL, \
                         year int, duration decimal, 
                         PRIMARY KEY (song_id, title, duration));
 """)
@@ -38,6 +31,18 @@ time_table_create = ("""CREATE TABLE IF NOT EXISTS time \
                         (start_time bigint PRIMARY KEY, hour int, day int, \
                          week int, month int, year int, weekday varchar);
 """)
+
+# Here a type SERIAL is used for songplay_id so that postgresql auto increments this id
+songplay_table_create = ("""CREATE TABLE IF NOT EXISTS songplays \
+                            (songplay_id SERIAL PRIMARY KEY, start_time bigint NOT NULL, user_id int NOT NULL, \
+                             level varchar, song_id varchar, artist_id varchar, session_id int, \
+                             location varchar, user_agent varchar, \
+                             CONSTRAINT fk_time FOREIGN KEY (start_time) REFERENCES time(start_time), \
+                             CONSTRAINT fk_users FOREIGN KEY (user_id) REFERENCES users(user_id), \
+                             CONSTRAINT fk_songs FOREIGN KEY (song_id) REFERENCES songs(song_id), \
+                             CONSTRAINT fk_artists FOREIGN KEY (artist_id) REFERENCES artists(artist_id)); 
+""")
+
 
 # INSERT RECORDS
 
@@ -82,6 +87,6 @@ song_select = ("""SELECT songs.song_id, songs.artist_id \
 
 # QUERY LISTS
 
-create_table_queries = [songplay_table_create, user_table_create, song_table_create,
-                        artist_table_create, time_table_create]
+create_table_queries = [user_table_create, song_table_create,
+                        artist_table_create, time_table_create, songplay_table_create]
 drop_table_queries = [songplay_table_drop, user_table_drop, song_table_drop, artist_table_drop, time_table_drop]
